@@ -1,12 +1,13 @@
 
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom"; // useFormStatus is still from react-dom
+import { useActionState } from "react"; // useActionState is from react
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import React, { useEffect, useRef } from "react"; // Added React and useRef
+import React, { useEffect, useRef } from "react";
 import { PlugZap } from "lucide-react";
 
 // Mock server action for connection
@@ -52,7 +53,7 @@ export function ConnectionForm({ initialHost }: { initialHost?: string }) {
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
   const initialState = { success: false, message: "", host: "" };
-  const [state, dispatch] = useFormState(connectRdp, initialState);
+  const [state, dispatch] = useActionState(connectRdp, initialState); // Updated here
 
   // Use a ref for the host input to set its value if initialHost is provided
   const hostInputRef = useRef<HTMLInputElement>(null);

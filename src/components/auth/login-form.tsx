@@ -1,6 +1,8 @@
+
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom"; // useFormStatus is still from react-dom
+import { useActionState } from "react"; // useActionState is from react
 import { login } from "@/lib/auth-actions";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -25,7 +27,8 @@ export function LoginForm() {
   const router = useRouter();
   const { toast } = useToast();
   const initialState = { success: false, message: "" };
-  const [state, dispatch] = useFormState(login, initialState);
+  // @ts-expect-error login action might be removed or changed
+  const [state, dispatch] = useActionState(login, initialState); // Updated here
 
   useEffect(() => {
     if (state?.message && !state.success) {
