@@ -1,4 +1,4 @@
-// @ts-nocheck because it needs to be a server component to set cookies, but we are not using react hooks
+
 "use server";
 
 import { cookies } from "next/headers";
@@ -19,7 +19,12 @@ export interface Session {
   isLoggedIn: boolean;
 }
 
-export async function login(formData: FormData) {
+interface LoginState {
+  success: boolean;
+  message: string;
+}
+
+export async function login(prevState: LoginState, formData: FormData): Promise<LoginState> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -59,3 +64,4 @@ export async function getSession(): Promise<Session | null> {
   }
   return null;
 }
+
