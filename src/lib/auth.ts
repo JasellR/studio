@@ -1,21 +1,12 @@
-import { cookies } from "next/headers";
-import type { Session } from "./auth-actions";
 
-const SESSION_COOKIE_NAME = "remoteflow_session";
+// cookies import is no longer needed for this simplified version.
+import type { Session } from "./auth-actions"; // Session type might still be referenced by other dashboard parts.
+
+// SESSION_COOKIE_NAME is no longer needed.
 
 export async function getCurrentUser(): Promise<Session | null> {
-  const sessionCookie = cookies().get(SESSION_COOKIE_NAME);
-  if (sessionCookie) {
-    try {
-      const session = JSON.parse(sessionCookie.value) as Session;
-      if (session.isLoggedIn) {
-        return session;
-      }
-      return null;
-    } catch (error) {
-      console.error("Failed to parse session cookie:", error);
-      return null;
-    }
-  }
+  // In a no-authentication setup, always return null.
+  // If some dashboard components still expect a Session object (even for a guest),
+  // this could be modified, but for now, null indicates no logged-in user.
   return null;
 }

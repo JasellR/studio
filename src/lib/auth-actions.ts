@@ -1,67 +1,38 @@
 
 "use server";
 
-import { cookies } from "next/headers";
+// cookies import is no longer needed.
 import { redirect } from "next/navigation";
 
-const SESSION_COOKIE_NAME = "remoteflow_session";
-// Mock user credentials
-const MOCK_USER = {
-  email: "user@example.com",
-  password: "password123",
-  name: "Demo User",
-  id: "1",
-};
+// SESSION_COOKIE_NAME and MOCK_USER are no longer relevant.
 
 export interface Session {
-  userId: string;
-  userName: string;
-  isLoggedIn: boolean;
+  userId: string; // Kept for potential type compatibility if other parts use it.
+  userName: string; // Kept for potential type compatibility.
+  isLoggedIn: boolean; // This would effectively always be false or the Session object null.
 }
 
+// LoginState and the login function are no longer part of the primary flow.
+// They can be removed or heavily simplified if not used elsewhere.
+/*
 interface LoginState {
   success: boolean;
   message: string;
 }
 
 export async function login(prevState: LoginState, formData: FormData): Promise<LoginState> {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  // Simulate database lookup & password check
-  if (email === MOCK_USER.email && password === MOCK_USER.password) {
-    const sessionData: Session = {
-      userId: MOCK_USER.id,
-      userName: MOCK_USER.name,
-      isLoggedIn: true,
-    };
-    cookies().set(SESSION_COOKIE_NAME, JSON.stringify(sessionData), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // One week
-      path: "/",
-    });
-    return { success: true, message: "Login successful" };
-  } else {
-    return { success: false, message: "Invalid email or password" };
-  }
+  // This function is not actively used in the new no-auth flow.
+  console.warn("Login function called, but authentication is disabled in the current flow.");
+  return { success: false, message: "Authentication is disabled." };
 }
+*/
 
 export async function logout() {
-  cookies().delete(SESSION_COOKIE_NAME);
-  redirect("/login");
+  // No session cookie to delete.
+  redirect("/"); // Redirect to the new home page.
 }
 
 export async function getSession(): Promise<Session | null> {
-  const sessionCookie = cookies().get(SESSION_COOKIE_NAME);
-  if (sessionCookie) {
-    try {
-      return JSON.parse(sessionCookie.value) as Session;
-    } catch (error) {
-      console.error("Failed to parse session cookie:", error);
-      return null;
-    }
-  }
-  return null;
+  // No session cookie to parse.
+  return null; // Always return null as there's no session.
 }
-

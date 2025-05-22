@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormState, useFormStatus } from "react-dom";
@@ -5,16 +6,26 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react"; // Added React and useRef
 import { PlugZap } from "lucide-react";
 
 // Mock server action for connection
 async function connectRdp(prevState: any, formData: FormData) {
   const host = formData.get("host");
-  // In a real app, this would attempt to establish an RDP connection
-  await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
+  const username = formData.get("username");
+  const password = formData.get("password");
+
+  // Basic validation for required fields in the action itself
+  if (!host || !username || !password) {
+    let missingFields = [];
+    if (!host) missingFields.push("host");
+    if (!username) missingFields.push("username");
+    if (!password) missingFields.push("password");
+    return { success: false, message: `Missing required fields: ${missingFields.join(', ')}.` };
+  }
   
-  // Simulate connection success/failure
+  await new Promise(resolve => setTimeout(resolve, 1500)); 
+  
   if (host === "error.test") {
     return { success: false, message: `Failed to connect to ${host}. Host not found.` };
   }
@@ -31,18 +42,32 @@ function SubmitButton() {
   );
 }
 
-// Define a type for the state of RdpClientMock, to be passed via event or context
 export interface RdpConnectionState {
   isConnected: boolean;
   host?: string;
   statusMessage?: string;
 }
 
-
-export function ConnectionForm() {
+export function ConnectionForm({ initialHost }: { initialHost?: string }) {
   const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
   const initialState = { success: false, message: "", host: "" };
   const [state, dispatch] = useFormState(connectRdp, initialState);
+
+  // Use a ref for the host input to set its value if initialHost is provided
+  const hostInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (initialHost && hostInputRef.current) {
+      hostInputRef.current.value = initialHost;
+      // If you want to auto-submit or focus other fields, you can add logic here.
+      // For example, to focus the username field if host is pre-filled:
+      const usernameInput = formRef.current?.elements.namedItem("username") as HTMLInputElement;
+      if (usernameInput) {
+        usernameInput.focus();
+      }
+    }
+  }, [initialHost]);
 
   useEffect(() => {
     if (state?.message) {
@@ -51,13 +76,9 @@ export function ConnectionForm() {
           title: "Connection Update",
           description: state.message,
         });
-        // Dispatch a custom event to update RdpClientMock
-        // This is a way for sibling components to communicate without complex prop drilling or context for this specific case.
-        // A more robust solution might use a shared state (Context, Zustand, etc.)
         document.dispatchEvent(new CustomEvent<RdpConnectionState>('rdpConnectionUpdate', { 
-          detail: { isConnected: true, host: state.host, statusMessage: `Connected to ${state.host}` } 
+          detail: { isConnected: true, host: state.host as string, statusMessage: `Connected to ${state.host}` } 
         }));
-
       } else {
          toast({
           variant: "destructive",
@@ -72,10 +93,18 @@ export function ConnectionForm() {
   }, [state, toast]);
 
   return (
-    <form action={dispatch} className="space-y-4">
+    <form ref={formRef} action={dispatch} className="space-y-4">
       <div>
         <Label htmlFor="host" className="font-mono">Host Address</Label>
-        <Input id="host" name="host" placeholder="e.g., 192.168.1.100 or mydesktop.example.com" required className="font-mono"/>
+        <Input 
+          ref={hostInputRef} // Attach ref here
+          id="host" 
+          name="host" 
+          placeholder="e.g., 192.168.1.100 or mydesktop.example.com" 
+          required 
+          className="font-mono"
+          defaultValue={initialHost || ""} // Also set defaultValue for initial render
+        />
       </div>
       <div>
         <Label htmlFor="port" className="font-mono">Port (Optional)</Label>
