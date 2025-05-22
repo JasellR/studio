@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Experimental features can be added here if needed, for example:
+  // experimental: {
+  //   serverActions: true, // Server Actions are stable in Next.js 14, but might need explicit enabling in older versions or specific configurations
+  // },
 };
 
 export default nextConfig;
