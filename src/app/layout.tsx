@@ -25,6 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Next.js will automatically populate this head with metadata and font links */}
+      </head>
       <body className={`${inter.variable} ${roboto_mono.variable} font-sans antialiased`}>
         {children}
         <Toaster />
