@@ -24,14 +24,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <head>
+    <html lang="en" className="dark"><head>
         {/* Next.js will automatically populate this head with metadata and font links */}
-      </head>
-      <body className={`${inter.variable} ${roboto_mono.variable} font-sans antialiased`}>
+      </head><body className={`${inter.variable} ${roboto_mono.variable} font-sans antialiased`}>
         {children}
         <Toaster />
-      </body>
-    </html>
+      </body></html>
   );
 }
