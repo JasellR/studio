@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,7 +64,7 @@ export function RdpClientMock() {
         {!isLoading && connectionState.isConnected && connectionState.host ? (
           <div className="w-full h-full bg-black rounded-md overflow-hidden relative">
             <Image 
-              src={`https://placehold.co/1200x800.png?text=Connected+to+${connectionState.host}`} 
+              src="https://placehold.co/1200x800.png" 
               alt={`Remote desktop view of ${connectionState.host}`}
               layout="fill"
               objectFit="contain" // 'cover' or 'contain' depending on desired effect
